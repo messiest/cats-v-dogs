@@ -2,8 +2,8 @@
 .DS_Store
 
 # Project
-data/cats/
-data/dogs/
+data/pixabay/
+data/cats-v-dogs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
