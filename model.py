@@ -105,5 +105,5 @@ def plot_results(history):
     plt.savefig('assets/cats-v-dogs.png')
 
 if __name__ == "__main__":
-    history = train_model(25)
+    history = train_model(50)
     plot_results(history)
