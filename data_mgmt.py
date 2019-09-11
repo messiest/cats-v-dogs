@@ -2,7 +2,8 @@ import os
 import shutil
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+
 
 def main():
     data_dir = os.path.join('data', 'pixabay')
@@ -11,12 +12,7 @@ def main():
     dog_dir = os.path.join(data_dir, 'dogs')
 
     print(f"{len(os.listdir(cat_dir))} cat photos")
-    print(f"{int(.9 * len(os.listdir(cat_dir)))} training cat photos")
-    print(f"{int(.1 * len(os.listdir(cat_dir)))} testing cat photos")
-    print()
     print(f"{len(os.listdir(dog_dir))} dog photos")
-    print(f"{int(.9 * len(os.listdir(dog_dir)))} training dog photos")
-    print(f"{int(.1 * len(os.listdir(dog_dir)))} testing dog photos")
 
     df = pd.concat(
         [
@@ -35,7 +31,7 @@ def main():
         ]
     )
 
-    train, validation = train_test_split(df, train_size=.9)
+    train, validation = train_test_split(df, train_size=.9, stratify=df['label'])
 
     os.makedirs(os.path.join('data', 'cats-v-dogs', 'training', 'cats'), exist_ok=True)
     os.makedirs(os.path.join('data', 'cats-v-dogs', 'training', 'dogs'), exist_ok=True)
@@ -61,6 +57,16 @@ def main():
         print(f"Validation: {label}, {file_name}", end='\r')
 
         shutil.copyfile(file, os.path.join('data', 'cats-v-dogs', 'validation', label, file_name))
+
+    print()
+
+    print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'training', 'cats')))} cat training photos")
+    print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'training', 'dogs')))} dog training photos")
+    print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'validation', 'cats')))} cat validation photos")
+    print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'validation', 'dogs')))} dog validation photos")
+
+
+
 
 
 if __name__ == "__main__":
