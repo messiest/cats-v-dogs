@@ -3,4 +3,4 @@
 
 Image classification.
 
-![Results](assets/cats-v-dogs.png)
+![Results](assets/figures/cats-v-dogs.png)
