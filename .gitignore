@@ -4,6 +4,8 @@
 # Project
 data/pixabay/
 data/cats-v-dogs/
+assets/models/*.h5
+assets/figures/*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

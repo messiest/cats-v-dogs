@@ -2,6 +2,7 @@ import os
 import zipfile
 import random
 from shutil import copyfile
+from uuid import uuid4
 
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop
@@ -13,7 +14,7 @@ import seaborn as sns
 sns.set(style='darkgrid')
 
 
-def train_model(epochs=100):
+def train_model(epochs=100, id=''):
     model = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
         tf.keras.layers.MaxPooling2D(2, 2),
@@ -74,10 +75,12 @@ def train_model(epochs=100):
         validation_data=validation_generator,
     )
 
+    model.save(os.path.join("assets", "models", f"{id}-model.h5"))
+
     return history
 
 
-def plot_results(history):
+def plot_results(history, id=''):
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
@@ -92,6 +95,7 @@ def plot_results(history):
     ax1.set_title('Training and Validation Accuracy')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Accuracy')
+    ax1.set_ylim(0, 1)
     ax1.legend()
 
 
@@ -100,10 +104,13 @@ def plot_results(history):
     ax2.set_title('Training and Validation Loss')
     ax2.set_xlabel('Epoch')
     ax2.set_ylabel('Loss')
+    ax2.set_ylim(0, 1)
     ax2.legend()
 
-    plt.savefig('assets/cats-v-dogs.png')
+
+    plt.savefig(os.path.join("assets", "figures", f"{id}-results.png"))
 
 if __name__ == "__main__":
-    history = train_model(50)
-    plot_results(history)
+    id = uuid4()
+    history = train_model(3, id)
+    plot_results(history, id)
