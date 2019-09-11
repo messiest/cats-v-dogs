@@ -2,7 +2,7 @@ import os
 import shutil
 
 import pandas as pd
-from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
 
 
 def main():
@@ -58,16 +58,10 @@ def main():
 
         shutil.copyfile(file, os.path.join('data', 'cats-v-dogs', 'validation', label, file_name))
 
-    print()
-
-    print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'training', 'cats')))} cat training photos")
+    print(f"\n{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'training', 'cats')))} cat training photos")
     print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'training', 'dogs')))} dog training photos")
     print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'validation', 'cats')))} cat validation photos")
     print(f"{len(os.listdir(os.path.join('data', 'cats-v-dogs', 'validation', 'dogs')))} dog validation photos")
-
-
-
-
 
 if __name__ == "__main__":
     main()

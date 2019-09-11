@@ -11,9 +11,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-sns.set(style='darkgrid')
-
-
 def train_model(epochs=100, id=''):
     model = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),
@@ -60,7 +57,7 @@ def train_model(epochs=100, id=''):
 
     VALIDATION_DIR = r"data/cats-v-dogs/validation/"
     validation_datagen = ImageDataGenerator(rescale=1./255)
-    validation_generator = train_datagen.flow_from_directory(
+    validation_generator = validation_datagen.flow_from_directory(
         VALIDATION_DIR,
         batch_size=128,
         class_mode='binary',
@@ -81,6 +78,7 @@ def train_model(epochs=100, id=''):
 
 
 def plot_results(history, id=''):
+    sns.set(style='darkgrid')
     acc = history.history['acc']
     val_acc = history.history['val_acc']
     loss = history.history['loss']
@@ -98,7 +96,6 @@ def plot_results(history, id=''):
     ax1.set_ylim(0, 1)
     ax1.legend()
 
-
     ax2.plot(epochs, loss, 'tab:blue', label='Training')
     ax2.plot(epochs, val_loss, 'tab:orange', label='Validation')
     ax2.set_title('Training and Validation Loss')
@@ -107,10 +104,9 @@ def plot_results(history, id=''):
     ax2.set_ylim(0, 1)
     ax2.legend()
 
-
     plt.savefig(os.path.join("assets", "figures", f"{id}-results.png"))
 
 if __name__ == "__main__":
     id = uuid4()
-    history = train_model(3, id)
+    history = train_model(10, id)
     plot_results(history, id)
