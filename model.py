@@ -1,9 +1,11 @@
+#!/usr/bin/env python
 import os
 import zipfile
 import random
 from shutil import copyfile
 from uuid import uuid4
 
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.optimizers import RMSprop
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -24,12 +26,12 @@ def train_model(epochs=100, id=''):
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(512, activation='relu'),
-        tf.keras.layers.Dense(1, activation='sigmoid')
+        tf.keras.layers.Dense(4, activation='sigmoid')
     ])
 
     model.compile(
         optimizer=RMSprop(lr=0.001),
-        loss='binary_crossentropy',
+        loss='categorical_crossentropy',
         metrics=['acc'],
     )
 
@@ -51,7 +53,7 @@ def train_model(epochs=100, id=''):
     train_generator = train_datagen.flow_from_directory(
         TRAINING_DIR,
         batch_size=128,
-        class_mode='binary',
+        class_mode='categorical',
         target_size=(150, 150),
     )
 
@@ -60,7 +62,7 @@ def train_model(epochs=100, id=''):
     validation_generator = validation_datagen.flow_from_directory(
         VALIDATION_DIR,
         batch_size=128,
-        class_mode='binary',
+        class_mode='categorical',
         target_size=(150, 150),
     )
 
@@ -93,7 +95,6 @@ def plot_results(history, id=''):
     ax1.set_title('Training and Validation Accuracy')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Accuracy')
-    ax1.set_ylim(0, 1)
     ax1.legend()
 
     ax2.plot(epochs, loss, 'tab:blue', label='Training')
@@ -101,12 +102,23 @@ def plot_results(history, id=''):
     ax2.set_title('Training and Validation Loss')
     ax2.set_xlabel('Epoch')
     ax2.set_ylabel('Loss')
-    ax2.set_ylim(0, 1)
     ax2.legend()
 
     plt.savefig(os.path.join("assets", "figures", f"{id}-results.png"))
 
 if __name__ == "__main__":
     id = uuid4()
-    history = train_model(10, id)
-    plot_results(history, id)
+    epochs = 2
+    results = train_model(epochs, id)
+    plot_results(results, id)
+
+    results.history['epochs'] = results.epoch
+
+    df = pd.DataFrame(results.history, index=[id] * len(results.epoch))
+
+    if os.path.exists('assets/results/records.csv'):
+        df.to_csv('assets/results/records.csv', mode='a', header=False)
+    else:
+        df.to_csv('assets/results/records.csv', mode='a', header=True)
+
+    print(f"Session ID: {id}")

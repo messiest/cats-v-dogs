@@ -2,6 +2,8 @@
 .DS_Store
 
 # Project
+data/*.zip
+data/*.csv
 data/pixabay/
 data/cats-v-dogs/
 assets/models/*.h5
