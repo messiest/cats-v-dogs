@@ -7,6 +7,4 @@ Image classifier trained with Dog and Cat images from [pixabay.com](https://www.
 
 
 ## TODO
-- Update data, including script for downloading structuring the data.
-- Also update the data readme
-- Start logging results in a csv and display as a table here. 
+- Train more models!

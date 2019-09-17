@@ -26,12 +26,12 @@ def train_model(epochs=100, id=''):
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(512, activation='relu'),
-        tf.keras.layers.Dense(4, activation='sigmoid')
+        tf.keras.layers.Dense(1, activation='sigmoid')
     ])
 
     model.compile(
         optimizer=RMSprop(lr=0.001),
-        loss='categorical_crossentropy',
+        loss='binary_crossentropy',
         metrics=['acc'],
     )
 
@@ -52,8 +52,8 @@ def train_model(epochs=100, id=''):
 
     train_generator = train_datagen.flow_from_directory(
         TRAINING_DIR,
-        batch_size=128,
-        class_mode='categorical',
+        batch_size=256,
+        class_mode='binary',
         target_size=(150, 150),
     )
 
@@ -61,20 +61,23 @@ def train_model(epochs=100, id=''):
     validation_datagen = ImageDataGenerator(rescale=1./255)
     validation_generator = validation_datagen.flow_from_directory(
         VALIDATION_DIR,
-        batch_size=128,
-        class_mode='categorical',
+        batch_size=32,
+        class_mode='binary',
         target_size=(150, 150),
     )
 
     history = model.fit_generator(
         train_generator,
         epochs=epochs,
+        # steps_per_epoch=8,
         verbose=1,
         use_multiprocessing=True,
         validation_data=validation_generator,
+        # validation_steps=8,
     )
 
-    model.save(os.path.join("assets", "models", f"{id}-model.h5"))
+    os.makedirs(os.path.join("assets", "models", "cats-v-dogs"), exist_ok=True)
+    model.save(os.path.join("assets", "models", "cats-v-dogs", f"{id}-model.h5"))
 
     return history
 
@@ -104,11 +107,13 @@ def plot_results(history, id=''):
     ax2.set_ylabel('Loss')
     ax2.legend()
 
-    plt.savefig(os.path.join("assets", "figures", f"{id}-results.png"))
+    os.makedirs(os.path.join("assets", "figures", "cats-v-dogs"), exist_ok=True)
+    plt.savefig(os.path.join("assets", "figures", "cats-v-dogs", f"{id}-results.png"))
 
-if __name__ == "__main__":
+
+def main():
     id = uuid4()
-    epochs = 2
+    epochs = 15
     results = train_model(epochs, id)
     plot_results(results, id)
 
@@ -116,9 +121,13 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(results.history, index=[id] * len(results.epoch))
 
-    if os.path.exists('assets/results/records.csv'):
-        df.to_csv('assets/results/records.csv', mode='a', header=False)
+    if os.path.exists('assets/results/cats_v_dogs.csv'):
+        df.to_csv('assets/results/cats_v_dogs.csv', mode='a', header=False)
     else:
-        df.to_csv('assets/results/records.csv', mode='a', header=True)
+        df.to_csv('assets/results/cats_v_dogs.csv', mode='a', header=True)
 
     print(f"Session ID: {id}")
+
+if __name__ == "__main__":
+    for i in range(3):
+        main()
