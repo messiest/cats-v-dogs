@@ -110,11 +110,14 @@ def plot_results(history, id=''):
 
 if __name__ == "__main__":
     id = uuid4()
-    epochs = 5
+    epochs = 15
     results = train_model(epochs, id)
     plot_results(results, id)
 
     results.history['epochs'] = results.epoch
+    results.history['checkpoint'] = [
+        os.path.join("assets", "models", "cats-v-dogs", f"{id}-model.h5")
+    ] * len(results.epoch)
 
     df = pd.DataFrame(results.history, index=[id] * len(results.epoch))
 

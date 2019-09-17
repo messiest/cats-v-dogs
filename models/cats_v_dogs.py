@@ -37,7 +37,6 @@ def train_model(epochs=100, id=''):
 
     print(model.summary())
 
-
     TRAINING_DIR = r"data/cats-v-dogs/training/"
     train_datagen = ImageDataGenerator(
           rescale=1./255,
@@ -69,11 +68,9 @@ def train_model(epochs=100, id=''):
     history = model.fit_generator(
         train_generator,
         epochs=epochs,
-        # steps_per_epoch=8,
         verbose=1,
         use_multiprocessing=True,
         validation_data=validation_generator,
-        # validation_steps=8,
     )
 
     os.makedirs(os.path.join("assets", "models", "cats-v-dogs"), exist_ok=True)
@@ -118,6 +115,9 @@ def main():
     plot_results(results, id)
 
     results.history['epochs'] = results.epoch
+    results.history['checkpoint'] = [
+        os.path.join("assets", "models", "cats-v-dogs", f"{id}-model.h5")
+    ] * len(results.epoch)
 
     df = pd.DataFrame(results.history, index=[id] * len(results.epoch))
 
